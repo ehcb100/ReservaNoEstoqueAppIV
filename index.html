@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Recolhimento Baixo</title>
+  <style>
+    :root {
+      --bg: #140022;
+      --bg-soft: #22003a;
+      --panel: rgba(20, 0, 34, 0.88);
+      --purple: #b04dff;
+      --purple-2: #8d2dff;
+      --pink: #ff5cf0;
+      --light: #f5ecff;
+      --muted: #d7c7f5;
+      --line: rgba(176, 77, 255, 0.35);
+      --danger: #ff5c7a;
+      --success: #72ffb3;
+      --shadow: 0 0 0 2px rgba(176,77,255,0.15), 0 0 24px rgba(255,92,240,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--light);
+      background:
+        radial-gradient(circle at 20% 70%, rgba(255,92,240,0.18), transparent 25%),
+        radial-gradient(circle at 70% 60%, rgba(176,77,255,0.20), transparent 30%),
+        linear-gradient(180deg, #1b0030, #12001f 70%);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 24px;
+      min-height: 100vh;
+      padding: 24px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+
+    .brand {
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      border-radius: 16px;
+      padding: 14px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .menu button {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px;
+      text-align: left;
+      color: white;
+      background: linear-gradient(180deg, rgba(18,0,31,0.95), rgba(34,0,58,0.95));
+      transition: 0.2s;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .menu button:hover,
+    .menu button.active {
+      transform: translateX(6px);
+      box-shadow: 0 0 18px rgba(176,77,255,0.25);
+      background: linear-gradient(90deg, rgba(176,77,255,0.18), rgba(255,92,240,0.18));
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      line-height: 1.2;
+    }
+
+    h2 {
+      color: var(--pink);
+      font-size: 1rem;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat small {
+      display: block;
+      color: var(--pink);
+      margin-bottom: 6px;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      max-width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(18,0,31,0.95);
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 700;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .primary { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+    .secondary { background: linear-gradient(90deg, #7a36ff, #b04dff); }
+    .danger { background: linear-gradient(90deg, #c02050, #ff5c7a); }
+
+    .message {
+      min-height: 22px;
+      font-size: 0.92rem;
+      color: var(--pink);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      width: 100%;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.95rem;
+      word-break: break-word;
+    }
+
+    th {
+      color: var(--pink);
+      font-size: 0.84rem;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 16px;
+      }
+
+      .sidebar {
+        position: static;
+        padding: 14px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 18px;
+        border-radius: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 14px;
+      }
+
+      .app {
+        padding: 10px;
+        gap: 12px;
+      }
+
+      .sidebar {
+        border-radius: 18px;
+        padding: 12px;
+      }
+
+      .brand {
+        font-size: 1rem;
+        padding: 12px;
+      }
+
+      .menu {
+        gap: 8px;
+      }
+
+      .menu button {
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+      }
+
+      .menu button:hover,
+      .menu button.active {
+        transform: none;
+      }
+
+      .panel {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      h2 {
+        font-size: 0.95rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        padding: 12px;
+      }
+
+      input, select, textarea {
+        padding: 12px;
+        font-size: 16px;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+
+      .footer {
+        font-size: 0.75rem;
+        padding-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Recolhimento</div>
+      <nav class="menu">
+        <button class="active" data-view="dashboard">Início</button>
+        <button data-view="registrar">Registrar Baixa</button>
+        <button data-view="todos">Todos os Registros</button>
+        <button data-view="pesquisa">Pesquisar</button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="panel hero">
+        <div>
+          <h1>Registro de Recolhimento Baixo</h1>
+          <p>
+            Sistema criado para registrar roupas que serão retiradas do estoque,
+            permitindo controle rápido, organização das baixas e exportação em PDF.
+          </p>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <small>TOTAL DE BAIXAS</small>
+            <strong id="totalBaixas">0</strong>
+          </div>
+          <div class="stat">
+            <small>PEÇAS RETIRADAS</small>
+            <strong id="totalPecas">0</strong>
+          </div>
+          <div class="stat">
+            <small>STATUS</small>
+            <strong>ATIVO</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel view hidden" data-view="registrar">
+        <h2>Registrar nova baixa</h2>
+        <form id="baixaForm">
+          <label>
+            Nome da roupa
+            <input type="text" id="nomeInput" placeholder="Ex.: Bermuda meia malha" required />
+          </label>
+
+          <label>
+            Referência
+            <input type="text" id="referenciaInput" placeholder="Ex.: BM-2245" required />
+          </label>
+
+          <label>
+            Categoria
+            <select id="categoriaInput" required>
+              <option value="">Selecione</option>
+              <option>Bermuda</option>
+              <option>Calça</option>
+              <option>Camiseta</option>
+              <option>Camisa</option>
+              <option>Jaqueta</option>
+              <option>Casaco</option>
+            </select>
+          </label>
+
+          <label>
+            Quantidade retirada
+            <input type="number" id="quantidadeInput" value="1" min="1" required />
+          </label>
+
+          <label>
+            Motivo da baixa
+            <textarea id="motivoInput" rows="3" placeholder="Ex.: defeito, devolução, troca interna..." required></textarea>
+          </label>
+
+          <div class="actions">
+            <button class="btn primary" type="submit" id="submitBtn">Registrar baixa</button>
+            <button class="btn danger hidden" type="button" id="cancelEditBtn">Cancelar edição</button>
+            <button class="btn secondary" type="button" id="exportPdfBtn">Exportar PDF</button>
+          </div>
+          <div class="message" id="formMessage"></div>
+        </form>
+      </section>
+
+      <section class="panel view" data-view="dashboard">
+        <h2>Últimos recolhimentos</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Roupa</th>
+                <th>Referência</th>
+                <th>Categoria</th>
+                <th>Quantidade</th>
+                <th>Motivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTable"></tbody>
+          </table>
+          <div class="message" id="dashboardEmpty">Nenhum recolhimento cadastrado ainda.</div>
+        </div>
+      </section>
+
+      <section class="panel view hidden" data-view="todos">
+        <h2>Todos os registros</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Roupa</th>
+                <th>Referência</th>
+                <th>Categoria</th>
+                <th>Quantidade</th>
+                <th>Motivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="allTable"></tbody>
+          </table>
+          <div class="message" id="allEmpty">Nenhum recolhimento cadastrado ainda.</div>
+        </div>
+      </section>
+
+      <section class="panel view hidden" data-view="pesquisa">
+        <h2>Pesquisar</h2>
+        <div class="actions" style="margin-bottom: 16px;">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Digite roupa, referência ou categoria"
+            style="flex:1; min-width:0;"
+          />
+          <button class="btn secondary" id="searchBtn" type="button">Pesquisar</button>
+          <button class="btn danger" id="clearSearchBtn" type="button">Limpar</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Roupa</th>
+                <th>Referência</th>
+                <th>Categoria</th>
+                <th>Quantidade</th>
+                <th>Motivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="searchTable"></tbody>
+          </table>
+          <div class="message" id="searchEmpty">Use a barra acima para pesquisar.</div>
+        </div>
+      </section>
+
+      <div class="footer">Criação de Eduardo Henrique Cunha Benevides</div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      updateDoc,
+      deleteDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD075HIqEi5GBHGPOWRvrddrW3MrSofn_Y",
+      authDomain: "noestoqueapp.firebaseapp.com",
+      projectId: "noestoqueapp",
+      storageBucket: "noestoqueapp.appspot.com",
+      messagingSenderId: "783504996736",
+      appId: "1:783504996736:web:9289f8fd4411ce67e5a965"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const recolhimentoRef = collection(db, "recolhimentoBaixo");
+
+    const state = {
+      items: [],
+      editingId: null,
+      lastSearch: ""
+    };
+
+    const menuButtons = document.querySelectorAll(".menu button");
+    const views = document.querySelectorAll(".view");
+    const baixaForm = document.getElementById("baixaForm");
+    const nomeInput = document.getElementById("nomeInput");
+    const referenciaInput = document.getElementById("referenciaInput");
+    const categoriaInput = document.getElementById("categoriaInput");
+    const quantidadeInput = document.getElementById("quantidadeInput");
+    const motivoInput = document.getElementById("motivoInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const exportPdfBtn = document.getElementById("exportPdfBtn");
+    const formMessage = document.getElementById("formMessage");
+    const dashboardTable = document.getElementById("dashboardTable");
+    const allTable = document.getElementById("allTable");
+    const searchTable = document.getElementById("searchTable");
+    const dashboardEmpty = document.getElementById("dashboardEmpty");
+    const allEmpty = document.getElementById("allEmpty");
+    const searchEmpty = document.getElementById("searchEmpty");
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const totalBaixas = document.getElementById("totalBaixas");
+    const totalPecas = document.getElementById("totalPecas");
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function setMessage(text = "", color = "var(--pink)") {
+      formMessage.textContent = text;
+      formMessage.style.color = color;
+    }
+
+    function resetForm(clearMessage = true) {
+      state.editingId = null;
+      baixaForm.reset();
+      quantidadeInput.value = 1;
+      submitBtn.textContent = "Registrar baixa";
+      cancelEditBtn.classList.add("hidden");
+      if (clearMessage) setMessage("");
+    }
+
+    function openView(viewName) {
+      menuButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === viewName);
+      });
+
+      views.forEach(view => {
+        view.classList.add("hidden");
+      });
+
+      const targetView = document.querySelector(`.view[data-view="${viewName}"]`);
+      if (targetView) {
+        targetView.classList.remove("hidden");
+      }
+    }
+
+    function createRow(item) {
+      return `
+        <tr>
+          <td>${escapeHtml(item.nome)}</td>
+          <td>${escapeHtml(item.referencia)}</td>
+          <td>${escapeHtml(item.categoria)}</td>
+          <td>${escapeHtml(item.quantidade)}</td>
+          <td>${escapeHtml(item.motivo)}</td>
+          <td><span class="tag">Registrado</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn secondary" style="padding:8px 12px;" onclick="window.editItem('${item.id}')">Editar</button>
+              <button class="btn danger" style="padding:8px 12px;" onclick="window.deleteItem('${item.id}')">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderTable(target, emptyEl, items, emptyText) {
+      if (!items.length) {
+        target.innerHTML = "";
+        emptyEl.textContent = emptyText;
+        return;
+      }
+      emptyEl.textContent = "";
+      target.innerHTML = items.map(createRow).join("");
+    }
+
+    function updateStats() {
+      totalBaixas.textContent = state.items.length;
+      totalPecas.textContent = state.items.reduce((acc, item) => acc + (Number(item.quantidade) || 0), 0);
+    }
+
+    function filterItems(term) {
+      const t = term.trim().toLowerCase();
+      if (!t) return state.items;
+
+      return state.items.filter(item =>
+        String(item.nome || "").toLowerCase().includes(t) ||
+        String(item.referencia || "").toLowerCase().includes(t) ||
+        String(item.categoria || "").toLowerCase().includes(t) ||
+        String(item.motivo || "").toLowerCase().includes(t)
+      );
+    }
+
+    function renderSearchResults(term, showDefaultMessage = true) {
+      state.lastSearch = term;
+      const filtered = filterItems(term);
+
+      if (!term.trim() && showDefaultMessage) {
+        searchTable.innerHTML = "";
+        searchEmpty.textContent = "Use a barra acima para pesquisar.";
+        return;
+      }
+
+      renderTable(searchTable, searchEmpty, filtered, "Nenhum resultado encontrado.");
+    }
+
+    function renderAll() {
+      const sortedItems = [...state.items].sort((a, b) => {
+        const dateA = new Date(a.criadoEm || 0).getTime();
+        const dateB = new Date(b.criadoEm || 0).getTime();
+        return dateB - dateA;
+      });
+
+      renderTable(
+        dashboardTable,
+        dashboardEmpty,
+        sortedItems.slice(0, 6),
+        "Nenhum recolhimento cadastrado ainda."
+      );
+
+      renderTable(
+        allTable,
+        allEmpty,
+        sortedItems,
+        "Nenhum recolhimento cadastrado ainda."
+      );
+
+      if (state.lastSearch.trim()) {
+        renderSearchResults(state.lastSearch, false);
+      } else {
+        searchTable.innerHTML = "";
+        searchEmpty.textContent = "Use a barra acima para pesquisar.";
+      }
+
+      updateStats();
+    }
+
+    async function loadItems() {
+      try {
+        const snapshot = await getDocs(recolhimentoRef);
+        state.items = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        }));
+        renderAll();
+      } catch (error) {
+        console.error("Erro ao carregar itens:", error);
+        setMessage("Erro ao carregar os registros do Firebase.", "var(--danger)");
+      }
+    }
+
+    baixaForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const nome = nomeInput.value.trim();
+      const referencia = referenciaInput.value.trim();
+      const categoria = categoriaInput.value.trim();
+      const quantidade = Math.max(1, Number(quantidadeInput.value) || 1);
+      const motivo = motivoInput.value.trim();
+
+      if (!nome || !referencia || !categoria || !motivo) {
+        setMessage("Preencha todos os campos obrigatórios.", "var(--danger)");
+        return;
+      }
+
+      submitBtn.disabled = true;
+
+      try {
+        if (state.editingId) {
+          await updateDoc(doc(db, "recolhimentoBaixo", state.editingId), {
+            nome,
+            referencia,
+            categoria,
+            quantidade,
+            motivo
+          });
+          resetForm(false);
+          setMessage("Registro atualizado com sucesso.", "var(--success)");
+        } else {
+          await addDoc(recolhimentoRef, {
+            nome,
+            referencia,
+            categoria,
+            quantidade,
+            motivo,
+            criadoEm: new Date().toISOString()
+          });
+          resetForm(false);
+          setMessage("Registro adicionado com sucesso.", "var(--success)");
+        }
+
+        await loadItems();
+        openView("todos");
+      } catch (error) {
+        console.error("Erro ao salvar:", error);
+        setMessage("Erro ao salvar no Firebase.", "var(--danger)");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    cancelEditBtn.addEventListener("click", () => {
+      resetForm();
+      openView("registrar");
+    });
+
+    searchBtn.addEventListener("click", () => {
+      renderSearchResults(searchInput.value);
+      openView("pesquisa");
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        renderSearchResults(searchInput.value);
+        openView("pesquisa");
+      }
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      state.lastSearch = "";
+      searchTable.innerHTML = "";
+      searchEmpty.textContent = "Use a barra acima para pesquisar.";
+    });
+
+    menuButtons.forEach(button => {
+      button.addEventListener("click", () => openView(button.dataset.view));
+    });
+
+    window.editItem = function(id) {
+      const item = state.items.find(entry => entry.id === id);
+      if (!item) return;
+
+      state.editingId = item.id;
+      nomeInput.value = item.nome || "";
+      referenciaInput.value = item.referencia || "";
+      categoriaInput.value = item.categoria || "";
+      quantidadeInput.value = item.quantidade || 1;
+      motivoInput.value = item.motivo || "";
+
+      submitBtn.textContent = "Salvar alteração";
+      cancelEditBtn.classList.remove("hidden");
+      setMessage("");
+      openView("registrar");
+    };
+
+    window.deleteItem = async function(id) {
+      const item = state.items.find(entry => entry.id === id);
+      if (!item) return;
+
+      const confirmar = confirm(`Excluir o registro de "${item.nome}"?`);
+      if (!confirmar) return;
+
+      try {
+        await deleteDoc(doc(db, "recolhimentoBaixo", id));
+        if (state.editingId === id) resetForm();
+        await loadItems();
+      } catch (error) {
+        console.error("Erro ao excluir:", error);
+        setMessage("Erro ao excluir o registro.", "var(--danger)");
+      }
+    };
+
+    exportPdfBtn.addEventListener("click", () => {
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+
+        pdf.setFontSize(18);
+        pdf.text("Registro de Recolhimento Baixo", 14, 18);
+
+        pdf.setFontSize(11);
+        pdf.text(`Total de baixas: ${state.items.length}`, 14, 30);
+        pdf.text(
+          `Peças retiradas: ${state.items.reduce((acc, item) => acc + (Number(item.quantidade) || 0), 0)}`,
+          14,
+          37
+        );
+
+        let y = 50;
+        pdf.setFontSize(10);
+
+        state.items.forEach(item => {
+          const linha = `${item.nome} | ${item.referencia} | ${item.categoria} | Qtd: ${item.quantidade} | ${item.motivo}`;
+          const linhas = pdf.splitTextToSize(linha, 180);
+
+          if (y + (linhas.length * 7) > 280) {
+            pdf.addPage();
+            y = 20;
+          }
+
+          pdf.text(linhas, 14, y);
+          y += (linhas.length * 7) + 4;
+        });
+
+        pdf.save("recolhimento-baixo.pdf");
+      } catch (error) {
+        console.error("Erro ao exportar PDF:", error);
+        setMessage("Erro ao exportar o PDF.", "var(--danger)");
+      }
+    });
+
+    loadItems();
+    openView("dashboard");
+  </script>
+</body>
+</html>
